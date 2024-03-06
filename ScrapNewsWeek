@@ -1,0 +1,65 @@
+# This line of code should be typed in ther terminal in order to install the library of "Scrapy", the latter is essential fror scraping(or extracting) data from websites
+!pip install scrapy
+
+# This line of code should also be typed in the terminal in order to create the folder and the file which we should use in order to start scraping
+!scrapy startproject newsweek
+
+# Thid command allows us to create/generate a new spider called 'newsweek' ,which will be essential in scraping this particular website(newsweek.com)
+!scrapy genspider newsweek newsweek.com
+
+# We are going to change the current working directory into the one containing the spider we generated earlier
+%cd newsweek/newsweek/spiders
+
+# We are trying to overwrite the Python file named 'newsweek.py' which will change to contain the code that will help us scrape the site
+%%writefile newsweek.py
+
+# Here is the content we want to have in order to scrape the given website
+%%writefile newsweek.py
+import scrapy
+
+class thehillspider(scrapy.Spider):
+    name = 'thehillspider'
+    allowed_domains = ['businessinsider.com']
+    start_urls = ['https://www.businessinsider.com/']
+
+    def parse(self, response):
+    #The big titles
+        news = response.css('div.tout-text')
+        for new in news:
+          yield{
+            'title1':new.css('a h3::text').get(),
+            'cat1':new.css('div.tout-tag a::text').get()
+          }
+    #The smaller ones
+        news = response.css('div.quick-link')
+        for new in news:
+          yield{
+            'title2':new.css('a h3::text').get(),
+            'cat2':new.css('div a::text').get()
+          }
+
+        news = response.css('div.tout-text')
+        for new in news:
+          yield{
+            'cat3':new.css('div.tout-tag a::text').get(),
+            'title3':new.css('div.tout-tag a h3::text').get()
+          }
+        news1 = response.css('div.tout-text')
+        for new in news1:
+          yield{
+            'cat4':new.css('div.tout-tag a::text').get(),
+            'title4':new.css('a h3.tout-title::text').get()
+          }
+        news3 = response.css('section.river-section')
+        for new in news3:
+          yield{
+            'cat5':new.css('div h2 a::text').get(),
+            'title5':new.css('div h3 a::text').get()
+          }
+
+
+#We have two choices; the first one bellow is to execute the code and it will show us the results
+!scrapy crawl tunspider
+
+# Or we can use this second one bellow in order to export the results into a .json file
+!scrapy crawl tunspider -o tunspiderinfo.json
