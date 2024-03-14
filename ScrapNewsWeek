@@ -13,24 +13,33 @@
 # We are trying to overwrite the Python file named 'newsweek.py' which will change to contain the code that will help us scrape the site
 %%writefile newsweek.py
 
-# Here is the content we want to have in order to scrape the given website
+# Here is the content we want to have in order to scrape the given website in the form of a python file
 %%writefile newsweek.py
 import scrapy
 
+# Defining a new class
 class thehillspider(scrapy.Spider):
+
+    #The name of the spider
     name = 'thehillspider'
+
+    # Specifies the domains that the spider is allowed to crawl. In this case, it restricts crawling to the 'businessinsider.com' domain
     allowed_domains = ['businessinsider.com']
+
+    # Provides a list of URLs that the spider will start crawling from. Here, it starts with the main page of 'businessinsider.com'
     start_urls = ['https://www.businessinsider.com/']
 
+    # Defines the parse method, which is the default callback method used by Scrapy to process downloaded responses. It takes the response object as its argument, which represents the web page being scraped
     def parse(self, response):
+    
     #The big titles
-        news = response.css('div.tout-text')
+        news = response.css('div.tout-text') # Selects elements from the HTML response that match the CSS selector 'div.tout-text'. This is typically done to extract specific content from the webpage
         for new in news:
-          yield{
+          yield { #Yields a dictionary containing the extracted data from the current element. This includes the title (title1) and category (cat1) extracted using CSS selectors
             'title1':new.css('a h3::text').get(),
             'cat1':new.css('div.tout-tag a::text').get()
           }
-    #The smaller ones
+    #The smaller titles
         news = response.css('div.quick-link')
         for new in news:
           yield{
